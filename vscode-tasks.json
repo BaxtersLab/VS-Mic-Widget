@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "STT: Record & Transcribe",
+            "type": "shell",
+            "command": "/home/baxter/bin/stt.sh",
+            "args": ["30"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true,
+                "focus": false
+            },
+            "problemMatcher": [],
+            "runOptions": {
+                "reevaluateOnRerun": true
+            }
+        }
+    ]
+}
