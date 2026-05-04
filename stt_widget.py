@@ -53,7 +53,7 @@ class STTWidget:
         self.root.configure(bg=BG)
         self.root.resizable(False, False)
 
-        w, h = 330, 340
+        w, h = 330, 375
         sw = self.root.winfo_screenwidth()
         sh = self.root.winfo_screenheight()
         self.root.geometry(f"{w}x{h}+{(sw-w)//2}+{(sh-h)//2}")
@@ -179,14 +179,23 @@ class STTWidget:
         self.textbox.pack(fill="both", expand=True, padx=10, pady=(0, 4))
         self.textbox.config(state="disabled")
 
-        # ── Copy button ──
+        # ── Copy button + GitHub link ──
         btn_row = tk.Frame(self.root, bg=BG)
-        btn_row.pack(fill="x", padx=10, pady=(0, 8))
+        btn_row.pack(fill="x", padx=10, pady=(0, 10))
 
         tk.Button(btn_row, text="Copy all", command=self._copy,
-                  bg=BG2, fg=FG, relief="flat", font=("Segoe UI", 9),
-                  activebackground=ACCENT, cursor="hand2", padx=10
+                  bg=BG2, fg=FG, relief="flat", font=("Segoe UI", 9, "bold"),
+                  activebackground=ACCENT, cursor="hand2", padx=12, pady=5
                   ).pack(side="left")
+
+        tk.Button(btn_row, text="⭐ GitHub",
+                  command=lambda: __import__('webbrowser').open(
+                      'https://github.com/BaxtersLab2/VS-Mic-Widget'),
+                  bg=BG, fg=ACCENT, relief="flat",
+                  font=("Segoe UI", 8), cursor="hand2",
+                  activebackground=BG, activeforeground="white",
+                  bd=0, pady=5
+                  ).pack(side="right")
 
     # ── Drag handlers ─────────────────────────────────────────────────────────
     def _drag_start(self, event):
