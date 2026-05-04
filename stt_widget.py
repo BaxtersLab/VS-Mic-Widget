@@ -350,18 +350,17 @@ class STTWidget:
         self.root.after(0, _update)
 
     def _do_paste(self, transcript):
-        """Focus target window and simulate Ctrl+V."""
+        """Activate target window and simulate Ctrl+V."""
         try:
             if not self._target_win:
                 self._set_status("No paste target set.", RED)
                 return
             # Refill clipboard right before paste (safety)
             self._copy_text(transcript)
+            # Single xdotool call: windowactivate raises via WM, then key fires
             subprocess.run(
-                ["xdotool", "windowfocus", "--sync", self._target_win],
-                check=True)
-            subprocess.run(
-                ["xdotool", "key", "--clearmodifiers", "ctrl+v"],
+                ["xdotool", "windowactivate", "--sync", self._target_win,
+                 "key", "--clearmodifiers", "ctrl+v"],
                 check=True)
             self._set_status("Pasted!", GREEN)
         except Exception as e:
