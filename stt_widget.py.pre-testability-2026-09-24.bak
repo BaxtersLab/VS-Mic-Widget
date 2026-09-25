@@ -29,47 +29,6 @@ YELLOW      = "#dcdcaa"
 ORANGE      = "#ce9178"
 
 
-# ── Pure helpers ───────────────────────────────────────────────────────────────
-#
-# These were inline inside the widget's methods, tangled with subprocess calls
-# and Tk callbacks, which made them untestable without a display and a
-# microphone. They are lifted out unchanged so they can be tested directly; the
-# methods below now call them and behave exactly as before.
-
-
-def clean_whisper_output(stdout: str) -> str:
-    """Turn whisper-cli's stdout into a single transcript line.
-
-    Drops blank lines, drops lines beginning with "[" (whisper's progress and
-    timestamp lines), and strips <|special|> tokens that survive
-    --print-special 0.
-    """
-    lines = []
-    for line in stdout.splitlines():
-        line = line.strip()
-        if not line or line.startswith("["):
-            continue
-        line = re.sub(r"<\|[^|]*\|>", "", line).strip()
-        if line:
-            lines.append(line)
-    return " ".join(lines).strip()
-
-
-def is_own_widget_window(win_name: str) -> bool:
-    """True when the focused window looks like this widget itself.
-
-    A heuristic, and deliberately a narrow one: it must contain "STT" AND be
-    shorter than 15 characters, so an editor showing a file called stt_widget.py
-    (a long title) is still a legitimate paste target.
-    """
-    return "STT" in win_name and len(win_name) < 15
-
-
-def shorten_window_name(win_name: str, limit: int = 38) -> str:
-    """Truncate a window title for the target label, with an ellipsis."""
-    return win_name[:limit] + "\u2026" if len(win_name) > limit else win_name
-
-
 class STTWidget:
     def __init__(self, root):
         self.root = root
@@ -256,13 +215,13 @@ class STTWidget:
             win_name = subprocess.check_output(
                 ["xdotool", "getwindowname", win_id], text=True).strip()
             # Don't target our own widget
-            if is_own_widget_window(win_name):
+            if "STT" in win_name and len(win_name) < 15:
                 self.target_lbl.config(
                     text="Paste target: click button from target window",
                     fg=RED)
                 return
             self._target_win = win_id
-            short = shorten_window_name(win_name)
+            short = win_name[:38] + "…" if len(win_name) > 38 else win_name
             self.target_lbl.config(text=f"Target: {short}", fg=GREEN)
         except Exception:
             self.target_lbl.config(text="Paste target: xdotool error", fg=RED)
@@ -349,7 +308,15 @@ class STTWidget:
                  "--print-special", "0"],
                 capture_output=True, text=True, timeout=120
             )
-            transcript = clean_whisper_output(result.stdout)
+            lines = []
+            for line in result.stdout.splitlines():
+                line = line.strip()
+                if not line or line.startswith("["):
+                    continue
+                line = re.sub(r"<\|[^|]*\|>", "", line).strip()
+                if line:
+                    lines.append(line)
+            transcript = " ".join(lines).strip()
         except Exception as e:
             self._on_done("", error=str(e))
             return

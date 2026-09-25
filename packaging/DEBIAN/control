@@ -1,0 +1,29 @@
+Package: baxters-vs-mic-widget
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Baxters Lab <165753632+Baxterv5@users.noreply.github.com>
+Depends: python3 (>= 3.11), python3-tk, ffmpeg, xdotool, adwaita-icon-theme
+Recommends: xclip
+Suggests: xsel
+Description: VS Mic Widget — offline floating speech-to-text
+ A small always-on-top widget that records from the microphone, transcribes
+ with whisper.cpp locally, and copies or types the result into whichever window
+ you chose as the target. Nothing leaves the machine.
+ .
+ DISTRO interpreter lane (A1 section 2a): Tkinter is a distro C-extension bound
+ to the system interpreter, so this does not use baxters-runtime.
+ .
+ xdotool is a hard dependency, not optional: it is how the widget identifies the
+ paste target and types into it. Without it the widget starts and every paste
+ silently fails with "xdotool error" in the status line.
+ .
+ xclip is Recommends and xsel Suggests because the widget tries them in order
+ and degrades honestly: with neither, Copy stops working while recording and
+ transcription still do.
+ .
+ whisper.cpp is NOT packaged and is deliberately not a dependency. The widget
+ expects whisper-cli and a model under the user's home, and says so in its
+ status line when they are absent. Packaging a multi-gigabyte model is a
+ separate decision (see the release readiness notes).
