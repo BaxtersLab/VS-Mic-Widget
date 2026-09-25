@@ -4,7 +4,7 @@ Section: utils
 Priority: optional
 Architecture: all
 Maintainer: Baxters Lab <165753632+Baxterv5@users.noreply.github.com>
-Depends: python3 (>= 3.11), python3-tk, ffmpeg, xdotool, adwaita-icon-theme
+Depends: python3 (>= 3.11), python3-tk, ffmpeg, xdotool
 Recommends: xclip
 Suggests: xsel
 Description: VS Mic Widget — offline floating speech-to-text

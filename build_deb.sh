@@ -38,6 +38,13 @@ find "$DEST" -name '__pycache__' -type d -prune -exec rm -rf {} + 2>/dev/null ||
 n=$( { find "$DEST" -name '*.bak' -print 2>/dev/null || true; } | wc -l )
 [ "$n" -eq 0 ] || { echo "FATAL: .bak files reached the payload" >&2; exit 1; }
 
+for icon in packaging/icons/vs-mic-widget_*x*.png; do
+    [ -e "$icon" ] || { echo "FATAL: no generated icons -- run packaging/generate_icon.py" >&2; exit 1; }
+    dim=$(basename "$icon" .png); dim=${dim#vs-mic-widget_}
+    mkdir -p "$STAGE/usr/share/icons/hicolor/$dim/apps"
+    cp -a "$icon" "$STAGE/usr/share/icons/hicolor/$dim/apps/$PKG.png"
+done
+
 bx_write_mit_copyright "$STAGE/usr/share/doc/$PKG/copyright" "VS Mic Widget"
 bx_normalise_modes "$STAGE"
 chmod 0755 "$DEST/run.sh"
