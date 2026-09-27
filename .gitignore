@@ -1,0 +1,5 @@
+# Build output is not source (operator ruling 2026-09-27): packages are built
+# from committed source by the pipeline. Hand-made backups: git history is the backup.
+/dist/
+*.deb
+*.bak*
