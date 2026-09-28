@@ -3,3 +3,5 @@
 /dist/
 *.deb
 *.bak*
+# Python bytecode is build output, never source (2026-09-28).
+__pycache__/
